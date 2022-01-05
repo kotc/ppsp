@@ -1,0 +1,29 @@
+config SND_PPSP
+       tristate "PP-Speaker support (READ HELP!)"
+       depends on PCSPKR_PLATFORM && X86 && HIGH_RES_TIMERS
+       depends on INPUT
+       select SND_PCM
+       help
+         If you don't have a sound card in your computer, you can include a
+         driver for the PP speaker which allows it to act like a primitive
+         sound card.
+         This driver also replaces the pcspkr driver for beeps.
+
+         You can compile this as a module which will be called snd-ppsp.
+
+         WARNING: if you already have a soundcard, enabling this
+         driver may lead to a problem. Namely, it may get loaded
+         before the other sound driver of yours, making the
+         pp-speaker a default sound device. Which is likely not
+         what you want. To make this driver play nicely with other
+         sound driver, you can add this in a configuration file under
+         /etc/modprobe.d/ directory:
+         options snd-ppsp index=2
+
+         You don't need this driver if you only want your pc-speaker to beep.
+         You don't need this driver if you have a tablet piezo beeper
+         in your PC instead of the real speaker.
+
+         Say N if you have a sound card.
+         Say M if you don't.
+         Say Y only if you really know what you do.
