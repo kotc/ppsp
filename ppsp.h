@@ -91,6 +91,8 @@ struct snd_ppsp {
 extern int debug;
 #endif
 
+extern int hr_thr;
+
 extern struct snd_ppsp ppsp_chip;
 
 extern enum hrtimer_restart ppsp_do_timer(struct hrtimer *handle);

@@ -13,7 +13,7 @@ A: Alsa driver for parallel port connected audio dongle, commonly called covox.
 
 Q: What works?
 A: Most things you would expect out of audio driver. Plays U8/S16,
-   mono/stereo, 8kHZ-48kHz streams. There is also softvol mixer implemented.
+   mono/stereo, 8kHz-48kHz streams. There is also softvol mixer implemented.
 
 Q: How to use it?
 A: - adjust kernel headers/config location
@@ -27,7 +27,7 @@ A: - adjust kernel headers/config location
 
 Q: What still needs to be done?
 A: Improve audio quality, remove some known bugs, test on more configurations.
-   Currently it was only tested via VirtualBox running on Dell E6440 with
+   Currently it was only tested via native and VirtualBox running on Dell E6440 with
    PR02X dock and some primitive covox clone.
 
 
@@ -35,3 +35,10 @@ Known bugs:
 - bug related to alsa period buffer
 - sometimes audio plays garbled, pausing/restarting stream few times helps
 - softvol and downmixer are crude and unoptimized
+
+
+Params:
+- pp_port: Port number of the parallel port (default: 0x378). (int)
+- hr_thr: Enable half-rate mode above this freq, for slow machines (default: 24000). (int)
+- index: Index value for ppsp soundcard. (int)
+- id: ID string for ppsp soundcard. (charp)

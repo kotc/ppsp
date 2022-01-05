@@ -281,18 +281,20 @@ enum hrtimer_restart ppsp_do_timer(struct hrtimer *handle)
 
 static int ppsp_start_playing(struct snd_ppsp *chip)
 {
+	int i=chip->last_val, j=(i<0x80?1:-1);
+
 #if PPSP_DEBUG
 	if(debug)
 		printk(KERN_INFO "PPSP: %s called\n", __FUNCTION__);
 #endif
 
-	int i=0;
-	if(chip->last_val==0)
-	while(chip->last_val!=0x80) {
-		i++;
-		chip->last_val=(1<<i);
-		outb_p(chip->last_val, chip->port);
+//printk(KERN_DEBUG "PPSP: start, i=%d j=%d\n", i, j);
+	while(i!=0x80) {
+		i+=j;
+		outb_p(i, chip->port);
+//printk(KERN_DEBUG "PPSP: start, i=%d j=%d\n", i, j);
 	}
+	chip->last_val=i;
 
 	if (atomic_read(&chip->timer_active)) {
 		printk(KERN_ERR "PPSP: Timer already active\n");
@@ -313,6 +315,8 @@ static int ppsp_start_playing(struct snd_ppsp *chip)
 
 static void ppsp_stop_playing(struct snd_ppsp *chip)
 {
+        int i=chip->last_val, j=(i>0?-1:1);
+
 #if PPSP_DEBUG
 	if(debug)
 		printk(KERN_INFO "PPSP: %s called\n", __FUNCTION__);
@@ -328,12 +332,17 @@ static void ppsp_stop_playing(struct snd_ppsp *chip)
 		return;
 
 	atomic_set(&chip->timer_active, 0);
-//	outb(0x00, chip->port);
-	while(chip->last_val>0) {
-		outb_p(chip->last_val, chip->port);
-		chip->last_val>>=1;
+#if 0
+	outb(0x00, chip->port);
+#else
+//printk(KERN_DEBUG "PPSP: stop, i=%d j=%d\n", i, j);
+	while(i!=0) {
+		i+=j;
+		outb_p(j, chip->port);
+//printk(KERN_DEBUG "PPSP: stop, i=%d j=%d\n", i, j);
 	}
-	outb_p(0, chip->port);
+	chip->last_val=i;
+#endif
 
 #if PPSP_I8253
 	raw_spin_lock(&i8253_lock);
@@ -424,7 +433,7 @@ static int snd_ppsp_playback_prepare(struct snd_pcm_substream *substream)
 	chip->is_signed = snd_pcm_format_signed(substream->runtime->format);
 	chip->chans = substream->runtime->channels;
 	chip->srate = substream->runtime->rate;
-	chip->half_rate=(chip->srate > 24000 ? 1 : 0);
+	chip->half_rate=(chip->srate > hr_thr ? 1 : 0);
 	chip->NS=PPSP_CALC_NS();
 // #if PPSP_DEBUG
 //	if(debug)
