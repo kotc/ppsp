@@ -40,5 +40,6 @@ Known bugs:
 Params:
 - pp_port: Port number of the parallel port (default: 0x378). (int)
 - hr_thr: Enable half-rate mode above this freq, for slow machines (default: 24000). (int)
+- allow_vol_boost: Allow volume over 100%. (default: 0) (int)
 - index: Index value for ppsp soundcard. (int)
 - id: ID string for ppsp soundcard. (charp)

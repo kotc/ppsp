@@ -36,6 +36,7 @@ static bool enable = SNDRV_DEFAULT_ENABLE1;	/* Enable this card */
 static bool nopcm;	/* Disable PCM capability of the driver */
 static int pp_port = 0x378;
 int hr_thr = 24000;
+int allow_vol_boost = 0;
 
 #if PPSP_DEBUG
 static int debug = PPSP_DEBUG;
@@ -46,15 +47,17 @@ module_param(debug, int, 0444);
 MODULE_PARM_DESC(debug, "Debugging messages.");
 #endif
 module_param(pp_port, int, 0444);
-MODULE_PARM_DESC(pp_port, "Port number of the parallel port (default: 0x378).");
+MODULE_PARM_DESC(pp_port, "Port number of the parallel port. (default: 0x378)");
 //unused. module_param(pp_irq, int, 0444);
-//MODULE_PARM_DESC(pp_irq, "IRQ number of the parallel port (default: 0x7).");
+//MODULE_PARM_DESC(pp_irq, "IRQ number of the parallel port. (default: 0x7)");
 module_param(index, int, 0444);
 MODULE_PARM_DESC(index, "Index value for ppsp soundcard.");
 module_param(id, charp, 0444);
 MODULE_PARM_DESC(id, "ID string for ppsp soundcard.");
 module_param(hr_thr, int, 0444);
-MODULE_PARM_DESC(hr_thr, "Enable half-rate mode above this freq, for slow machines (default: 24000).");
+MODULE_PARM_DESC(hr_thr, "Enable half-rate mode above this freq, for slow machines. (default: 24000)");
+module_param(allow_vol_boost, int, 0444);
+MODULE_PARM_DESC(allow_vol_boost, "Allow volume over 100%. (default: 0)");
 #if 0
 module_param(enable, bool, 0444);
 MODULE_PARM_DESC(enable, "Enable PC-Speaker sound.");

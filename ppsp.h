@@ -92,6 +92,7 @@ extern int debug;
 #endif
 
 extern int hr_thr;
+extern int allow_vol_boost;
 
 extern struct snd_ppsp ppsp_chip;
 

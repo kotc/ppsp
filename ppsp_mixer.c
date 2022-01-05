@@ -65,7 +65,7 @@ static int ppsp_volume_put(struct snd_kcontrol *kcontrol,
 	int changed = 0;
 	int vmax = 30;
 	int volume = ucontrol->value.integer.value[0];
-	if(volume>vmax) { volume=vmax; }
+	if(!allow_vol_boost && volume>vmax) { volume=vmax; }
 	if(chip->volume!=volume) {
 		changed = 1;
 		chip->volume = volume;
