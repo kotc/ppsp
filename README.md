@@ -4,6 +4,8 @@ PP-Speaker driver for Linux
 
 Copyright (C) 2022-2022  ariel/KotCzarny (tjosko@yahoo.com)
 
+Home page: https://github.com/kotc/ppsp
+
 
 Small FAQ:
 
