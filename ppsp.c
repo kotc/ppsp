@@ -19,6 +19,7 @@
 #include <linux/mm.h>
 #include "ppsp_input.h"
 #include "ppsp.h"
+#include <linux/version.h>
 
 MODULE_AUTHOR("ariel/KotCzarny <tjosko@yahoo.com>");
 MODULE_AUTHOR("Stas Sergeev <stsp@users.sourceforge.net>");
@@ -70,9 +71,16 @@ struct snd_ppsp ppsp_chip;
 static int snd_ppsp_create(struct snd_card *card)
 {
 	static struct snd_device_ops ops = { };
-	unsigned int resolution = hrtimer_resolution;
+	unsigned int resolution;
 	int err;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+	struct timespec tp;
+	hrtimer_get_res(CLOCK_MONOTONIC, &tp);
+	resolution = tp.tv_sec || tp.tv_nsec;
+#else
+	resolution = hrtimer_resolution;
+#endif
 	if (!nopcm) {
 		if (resolution > PPSP_MAX_PERIOD_NS) {
 			printk(KERN_ERR "PPSP: Timer resolution is not sufficient "
@@ -175,10 +183,18 @@ static int alsa_card_ppsp_init(struct device *dev)
 	}
 
 	/* Well, CONFIG_DEBUG_PAGEALLOC makes the sound horrible. Lets alert */
-	if (debug_pagealloc_enabled()) {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+#ifdef CONFIG_DEBUG_PAGEALLOC
+	printk(KERN_WARNING "PPSP: CONFIG_DEBUG_PAGEALLOC is enabled, "
+	       "which may make the sound noisy.\n");
+#endif
+#else
+	if (debug_pagealloc_enabled())
+	{
 		printk(KERN_WARNING "PPSP: CONFIG_DEBUG_PAGEALLOC is enabled, "
 		       "which may make the sound noisy.\n");
 	}
+#endif
 
 	return 0;
 }

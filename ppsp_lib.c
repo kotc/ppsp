@@ -15,6 +15,7 @@
 #include <linux/io.h>
 #include <sound/pcm.h>
 #include "ppsp.h"
+#include <linux/version.h>
 
 #define DMIX_WANTS_S16	1
 
@@ -117,7 +118,7 @@ The DMA buffer is defined by the following four fields, dma_area, dma_addr, dma_
 			val[2] = runtime->dma_area[pos+chip->fmt_size*2];
 			val[3] = runtime->dma_area[pos+chip->fmt_size*3];
 			val[0] = ((((val[0]<<24)/div + (val[1]<<24)/div
-			 + (val[3]<<24)/div + (val[4]<<24)/div))>>24)&0xff;
+			 + (val[2]<<24)/div + (val[3]<<24)/div))>>24)&0xff;
 			break;
 	}
 
@@ -309,7 +310,11 @@ static int ppsp_start_playing(struct snd_ppsp *chip)
 #endif
 	atomic_set(&chip->timer_active, 1);
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
+	hrtimer_start(&ppsp_chip.timer, ktime_set(0, 0), HRTIMER_MODE_REL);
+#else
 	hrtimer_start(&ppsp_chip.timer, 0, HRTIMER_MODE_REL);
+#endif
 	return 0;
 }
 
